@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -32,11 +33,8 @@ public class UserMealsUtil {
         List<UserMealWithExcess> mealsWithExcesses = new ArrayList<>();
         Map<LocalDate, Integer> map = new HashMap<>();
 
-        for (UserMeal meal: meals) {
-            if (map.get(meal.getDateTime()) == null)
-                map.put(meal.getDateTime().toLocalDate(), meal.getCalories());
-            else
-                map.put(meal.getDateTime().toLocalDate(), map.get(meal.getDateTime().toLocalDate()) + meal.getCalories());
+        for (UserMeal userMeal : meals) {
+            map.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), Integer::sum);
         }
 
         for (UserMeal meal: meals) {
@@ -55,7 +53,24 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO Implement by streams
-        return null;
+
+        List<UserMealWithExcess> mealsWithExcesses = new ArrayList<>();
+        Map<LocalDate, Integer> map = new HashMap<>();
+
+        meals.forEach(meal -> map.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), Integer::sum));
+
+        meals.stream()
+                .filter(meal -> (meal.getDateTime().toLocalTime().compareTo(endTime) <= 0))
+                .filter(meal -> (meal.getDateTime().toLocalTime().compareTo(startTime) >= 1))
+                .forEach(meal -> {
+                    boolean excess = map.get(meal.getDateTime().toLocalDate()) > caloriesPerDay;
+                    mealsWithExcesses.add(new UserMealWithExcess(
+                        meal.getDateTime(),
+                        meal.getDescription(),
+                        meal.getCalories(),
+                        excess));
+                });
+
+        return mealsWithExcesses;
     }
 }
