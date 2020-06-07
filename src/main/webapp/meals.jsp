@@ -12,6 +12,8 @@
 <html>
 <head>
     <title>Meals</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </head>
 <body>
 <table>
@@ -25,14 +27,14 @@
     <tbody>
     <jsp:useBean id="meals" scope="request" type="java.util.List"/>
     <c:forEach var="meal" items="${meals}">
-                <c:choose>
-                    <c:when test="${meal.excess}">
-                        <tr style="color: red">
-                    </c:when>
-                    <c:otherwise>
-                        <tr style="color: green">
-                    </c:otherwise>
-                </c:choose>
+            <c:choose>
+                <c:when test="${meal.excess}">
+                    <tr style="color: red">
+                </c:when>
+                <c:otherwise>
+                    <tr style="color: forestgreen">
+                </c:otherwise>
+            </c:choose>
             <td><javatime:format value="${meal.dateTime}" pattern="dd-MM-yyyy HH:mm" /></td>
             <td><c:out value="${meal.description}" /></td>
             <td><c:out value="${meal.calories}" /></td>

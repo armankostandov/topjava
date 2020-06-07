@@ -56,7 +56,9 @@ public class MealServlet extends HttpServlet {
         meals.addAll(mealMapService.findAll());
 
         List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+        LocalDateTime now = LocalDateTime.now();
 
+        request.setAttribute("now", now);
         request.setAttribute("meals", mealTos);
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
 
