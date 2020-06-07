@@ -36,8 +36,18 @@
             <td><javatime:format value="${meal.dateTime}" pattern="dd-MM-yyyy HH:mm" /></td>
             <td><c:out value="${meal.description}" /></td>
             <td><c:out value="${meal.calories}" /></td>
-            <td><button>Edit</button></td>
-            <td><button>Delete</button></td>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="id" value="<c:out value="${meal.id}" />">
+                    <input type="submit" name="action" value="Edit"/>
+                </form>
+            </td>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="id" value="<c:out value="${meal.id}" />">
+                    <input type="submit" name="action" value="Delete"/>
+                </form>
+            </td>
         </tr>
     </c:forEach>
     </tbody>

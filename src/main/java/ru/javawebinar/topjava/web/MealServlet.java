@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.services.map.MealMapService;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,8 +26,8 @@ public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.debug("redirect to meals");
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
         List<Meal> preMeals = Arrays.asList(
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
@@ -41,6 +42,34 @@ public class MealServlet extends HttpServlet {
 
         for (Meal meal: preMeals) {
             mealMapService.save(meal);
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("redirect to meals");
+
+        MealMapService mealMapService = MealMapService.getMealMapService();
+
+        List<Meal> meals = new ArrayList<>();
+        meals.addAll(mealMapService.findAll());
+
+        List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+
+        request.setAttribute("meals", mealTos);
+        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        MealMapService mealMapService = MealMapService.getMealMapService();
+
+        request.setCharacterEncoding("UTF-8");
+        String action = request.getParameter("action");
+
+        if ("Delete".equals(action)) {
+            mealMapService.deleteById((long) Integer.parseInt(request.getParameter("id")));
         }
 
         List<Meal> meals = new ArrayList<>();
