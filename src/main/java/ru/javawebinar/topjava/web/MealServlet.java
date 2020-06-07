@@ -75,7 +75,9 @@ public class MealServlet extends HttpServlet {
             List<Meal> meals = new ArrayList<>();
             meals.addAll(mealMapService.findAll());
             List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+            LocalDateTime now = LocalDateTime.now();
 
+            request.setAttribute("now", now);
             request.setAttribute("meals", mealTos);
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         }
@@ -101,7 +103,26 @@ public class MealServlet extends HttpServlet {
             List<Meal> meals = new ArrayList<>();
             meals.addAll(mealMapService.findAll());
             List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+            LocalDateTime now = LocalDateTime.now();
 
+            request.setAttribute("now", now);
+            request.setAttribute("meals", mealTos);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+
+        }
+
+        if ("Add".equals(action)) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"), formatter);
+            Meal meal = new Meal(dateTime, request.getParameter("description"), Integer.parseInt(request.getParameter("calories")));
+            mealMapService.save(meal);
+
+            List<Meal> meals = new ArrayList<>();
+            meals.addAll(mealMapService.findAll());
+            List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+            LocalDateTime now = LocalDateTime.now();
+
+            request.setAttribute("now", now);
             request.setAttribute("meals", mealTos);
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
 

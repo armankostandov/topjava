@@ -52,5 +52,12 @@
     </c:forEach>
     </tbody>
 </table>
+<form method="post">
+    <input type="datetime-local" name="dateTime" value="<javatime:format value="${now}" pattern="dd-MM-yyyy HH:mm" />">
+    <input type="text" name="description" value="">
+    <input type="number" name="calories" value="">
+    <input type="hidden" name="id">
+    <input type="submit" name="action" value="Add">
+</form>
 </body>
 </html>
