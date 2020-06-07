@@ -28,10 +28,10 @@
     <c:forEach var="meal" items="${meals}">
         <c:choose>
             <c:when test="${meal.excess}">
-                <tr style="color: red; border: orange 2px solid">
+                <tr style="color: red">
             </c:when>
             <c:otherwise>
-                <tr style="color: forestgreen; border: orange 2px solid">
+                <tr style="color: forestgreen">
             </c:otherwise>
         </c:choose>
         <td><javatime:format value="${meal.dateTime}" pattern="dd-MM-yyyy HH:mm" /></td>
