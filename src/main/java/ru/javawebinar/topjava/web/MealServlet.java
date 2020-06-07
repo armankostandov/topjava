@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -70,15 +71,41 @@ public class MealServlet extends HttpServlet {
 
         if ("Delete".equals(action)) {
             mealMapService.deleteById((long) Integer.parseInt(request.getParameter("id")));
+
+            List<Meal> meals = new ArrayList<>();
+            meals.addAll(mealMapService.findAll());
+            List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+
+            request.setAttribute("meals", mealTos);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
         }
 
-        List<Meal> meals = new ArrayList<>();
-        meals.addAll(mealMapService.findAll());
+        if ("Edit".equals(action)) {
+            List<Meal> meals = new ArrayList<>();
+            meals.addAll(mealMapService.findAll());
 
-        List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+            List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+            Meal mealToEdit = mealMapService.findById((long) Integer.parseInt(request.getParameter("id")));
+            request.setAttribute("meals", mealTos);
+            request.setAttribute("mealToEdit", mealToEdit);
+            request.getRequestDispatcher("/mealsEdit.jsp").forward(request, response);
+        }
 
-        request.setAttribute("meals", mealTos);
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        if ("Update".equals(action)) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"), formatter);
+            Meal meal = new Meal(dateTime, request.getParameter("description"), Integer.parseInt(request.getParameter("calories")));
+            meal.setId((long) Integer.parseInt(request.getParameter("id")));
+            mealMapService.save(meal);
+
+            List<Meal> meals = new ArrayList<>();
+            meals.addAll(mealMapService.findAll());
+            List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, 2000);
+
+            request.setAttribute("meals", mealTos);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+
+        }
 
     }
 }
