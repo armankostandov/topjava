@@ -25,18 +25,19 @@
     <tbody>
     <jsp:useBean id="meals" scope="request" type="java.util.List"/>
     <c:forEach var="meal" items="${meals}">
-
-        <c:choose>
-            <c:when test="${meal.excess}">
-                <tr style="color: red">
-            </c:when>
-            <c:otherwise>
-                <tr style="color: green">
-            </c:otherwise>
-        </c:choose>
+                <c:choose>
+                    <c:when test="${meal.excess}">
+                        <tr style="color: red">
+                    </c:when>
+                    <c:otherwise>
+                        <tr style="color: green">
+                    </c:otherwise>
+                </c:choose>
             <td><javatime:format value="${meal.dateTime}" pattern="dd-MM-yyyy HH:mm" /></td>
             <td><c:out value="${meal.description}" /></td>
             <td><c:out value="${meal.calories}" /></td>
+            <td><button>Edit</button></td>
+            <td><button>Delete</button></td>
         </tr>
     </c:forEach>
     </tbody>
