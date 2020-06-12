@@ -1,11 +1,12 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,6 +22,7 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal save(Meal meal) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+            meal.setUserId(SecurityUtil.authUserId());
             repository.put(meal.getId(), meal);
             return meal;
         }
@@ -30,17 +32,29 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id) {
-        return repository.remove(id) != null;
+        if (repository.get(id).getId().equals(id))
+            return repository.remove(id) != null;
+        else
+            return false;
     }
 
     @Override
     public Meal get(int id) {
-        return repository.get(id);
+        if (repository.get(id).getId().equals(id))
+            return repository.get(id);
+        else
+            return null;
     }
 
     @Override
     public Collection<Meal> getAll() {
-        return repository.values();
+        List<Meal> meals = new ArrayList<>();
+        for (Map.Entry<Integer, Meal> entry: repository.entrySet()) {
+            if (entry.getValue().getUserId().equals(SecurityUtil.authUserId()))
+                meals.add(entry.getValue());
+        }
+        Collections.sort(meals);
+        return meals;
     }
 }
 
