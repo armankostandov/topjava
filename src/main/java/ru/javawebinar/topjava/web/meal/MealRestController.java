@@ -2,10 +2,11 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.List;
 
@@ -24,29 +25,39 @@ public class MealRestController {
 
     public List<Meal> getAll() {
         log.info("getAll");
-        return service.getAll();
+        return service.getAll(SecurityUtil.authUserId());
     }
 
     public Meal get(int id) {
         log.info("get {}", id);
-        return service.get(id);
+        if (service.get(id).getUserId() == SecurityUtil.authUserId())
+            return service.get(id);
+        else
+            throw new NotFoundException(service.get(id) + " has user id " + service.get(id).getUserId());
     }
 
     public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
+        meal.setUserId(SecurityUtil.authUserId());
         return service.create(meal);
     }
 
     public void delete(int id) {
         log.info("delete {}", id);
-        service.delete(id);
+        if (service.get(id).getUserId() == SecurityUtil.authUserId())
+            service.delete(id);
+        else
+            throw new NotFoundException(service.get(id) + " has user id " + service.get(id).getUserId());
     }
 
     public void update(Meal meal, int id) {
         log.info("update {} with id={}", meal, id);
         assureIdConsistent(meal, id);
-        service.update(meal);
+        if (meal.getUserId() == SecurityUtil.authUserId())
+            service.update(meal);
+        else
+            throw new NotFoundException(meal + " has user id " + meal.getUserId());
     }
 
 }
