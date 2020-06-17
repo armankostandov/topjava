@@ -20,6 +20,27 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
+    <form method="post">
+        <div class="row">
+            <div class="offset-1 col-2">
+                <label for="startDate">Starting Date</label>
+                <input type="date" class="form-control" name="startDate" id="startDate" autocomplete="off">
+            </div>
+            <div class="col-2">
+                <label for="endDate">Ending Date</label>
+                <input type="date" class="form-control" name="endDate" id="endDate" autocomplete="off">
+            </div>
+            <div class="offset-2 col-2">
+                <label for="startTime">Starting Time</label>
+                <input type="time" class="form-control" name="startTime" id="startTime" autocomplete="off">
+            </div>
+            <div class="col-2">
+                <label for="endTime">Ending Time</label>
+                <input type="time" class="form-control" name="endTime" id="endTime" autocomplete="off">
+            </div>
+        </div>
+        <input type="submit" name="action" value="Filter"/>
+    </form>
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
