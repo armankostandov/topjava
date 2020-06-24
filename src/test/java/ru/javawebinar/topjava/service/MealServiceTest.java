@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -48,10 +50,20 @@ public class MealServiceTest {
     }
 
     @Test
+    public void getNotFound() throws Exception {
+        assertThrows(NotFoundException.class, () -> service.get(1, 100001));
+    }
+
+    @Test
     public void delete() {
         service.delete(1, 100000);
         List<Meal> meals = service.getAll(100000);
         assertMatch(meals, Arrays.asList(MEAL2, MEAL3));
+    }
+
+    @Test
+    public void deleteNotFound() throws Exception {
+        assertThrows(NotFoundException.class, () -> service.delete(1, 100001));
     }
 
     @Test
@@ -73,6 +85,13 @@ public class MealServiceTest {
         meal.setCalories(700);
         service.update(meal, 100000);
         assertMatch(service.get(1, 100000), meal);
+    }
+
+    @Test
+    public void updateNotFound() throws Exception {
+        Meal meal = MEAL1;
+        meal.setCalories(900);
+        assertThrows(NotFoundException.class, () -> service.update(meal, 100001));
     }
 
     @Test
